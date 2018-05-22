@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/iv_display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:padding="15dp"
+            app:srcCompat="@drawable/beans" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <TextView
+                    android:id="@+id/tv_item_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="44dp"
+                    android:layout_marginTop="26dp"
+                    android:text="Name" />
+
+                <TextView
+                    android:id="@+id/tv_item_tag_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_item_tag"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="30dp"
+                    android:text="textview" />
+
+                <TextView
+                    android:id="@+id/tv_item_price_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/tv_item_tag"
+                    android:layout_below="@+id/tv_item_tag"
+                    android:layout_marginTop="28dp"
+                    android:text="Price" />
+
+                <TextView
+                    android:id="@+id/tv_item_price_tag_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/tv_item_tag_value"
+                    android:layout_alignTop="@+id/tv_item_price_tag"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/tv_qty_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/tv_item_price_tag"
+                    android:layout_below="@+id/tv_item_price_tag"
+                    android:layout_marginTop="26dp"
+                    android:text="Qty" />
+
+                <EditText
+                    android:id="@+id/et_qty_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_qty_tag"
+                    android:layout_alignBottom="@+id/tv_qty_tag"
+                    android:layout_alignEnd="@+id/tv_item_price_tag_value"
+                    android:ems="3"
+                    android:hint="Qty"
+                    android:inputType="number"
+                    android:maxLength="2" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/ll_button_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:weightSum="1"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/add_to_cart"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:text="Add to cart"/>
+
+        <Button
+            android:id="@+id/checkout"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="match_parent"
+            android:layout_alignRight="@id/add_to_cart"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:text="Checkout" />
+    </LinearLayout>
+</LinearLayout>
