@@ -47,7 +47,6 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_item_details);
         Intent intent = getIntent();
         object = (ItemGridViewObject) intent.getParcelableExtra("INTENT_OBJECT");
-        Log.i("Anup", "ItemSetailsView Content - "+object.getName() +" - "+object.getImageView() + " - "+object.getPrice());
         //sharedPreference = new MySharedPreference(ItemDetailsView.this);
         dbHelper = new LocalDbHelper(ItemDetailsView.this);
         initView();
@@ -98,10 +97,7 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if(v.getId() == R.id.add_to_cart){
             if(!(et_qty.getText().toString().equals(null)) || !(et_qty.getText().toString() == null)){
-                //ItemGridViewObject itemGridViewObject = null;
-                //itemGridViewObject = new ItemGridViewObject(object.getImageView(), object.getName(), object.getPrice());
-                //controller.setProducts(itemGridViewObject);
-                //int size = controller.getProductArrayListSize();
+
                 btnCheckout.setText("CHECKOUT - "+et_qty.getText().toString());
                 setEnteredQty(et_qty.getText().toString());
                 insertCartItemData(et_qty.getText().toString());
