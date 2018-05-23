@@ -85,32 +85,27 @@ public class LocalDbHelper extends SQLiteOpenHelper {
             return rowInserted;
         }catch (Exception e){
 
-        } finally {
-            db.close();
         }
         return 0;
     }
 
-    public long insertExhangeRatesIntoDB(List<RatesModel> ratesModelList){
+    public void insertExhangeRatesIntoDB(List<RatesModel> ratesModelList){
         Log.i("Anup",  "RatesModelListSize "+ratesModelList.size());
         long rowInserted = -5;
-        SQLiteDatabase db = this.getWritableDatabase();
-        for (RatesModel model:ratesModelList) {
+        SQLiteDatabase db = getWritableDatabase();
+        for (int i=0; i<ratesModelList.size(); i++){
             try{
                 ContentValues values = new ContentValues();
-                values.put(CURRENCY_NAME, model.getCurrenyName());
-                values.put(EXCHANGE_RATE, model.getRate());
+                Log.i("Anup",  "Anup inserted Rates "+ratesModelList.get(i).getCurrenyName() + " - "+ratesModelList.get(i).getRate());
+                values.put(CURRENCY_NAME, ratesModelList.get(i).getCurrenyName());
+                values.put(EXCHANGE_RATE, ratesModelList.get(i).getRate());
 
-                rowInserted = db.insert(TB_RATES, null, values);
-                Log.i("Anup",  "Anup "+rowInserted);
-                return rowInserted;
+                db.insert(TB_RATES, null, values);
             }catch (Exception e){
 
-            } finally {
-                db.close();
             }
         }
-        return 0;
+        db.close();
     }
 
     // get number of item inserted or row count
@@ -123,8 +118,6 @@ public class LocalDbHelper extends SQLiteOpenHelper {
             return cursor.getCount();
         }catch (Exception e){
 
-        }finally {
-            db.close();
         }
 
 
@@ -134,9 +127,8 @@ public class LocalDbHelper extends SQLiteOpenHelper {
     //fetched all data to show in cartview
     public List<CartItemsModel> getAllCartItems(){
         List<CartItemsModel> cartItemList = new ArrayList<CartItemsModel>();
-
-        String selectQuery = "SELECT ROWID, * FROM " + TB_CART_ITEMS;
         SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT ROWID, * FROM " + TB_CART_ITEMS;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
         if(cursor != null && cursor.getCount() > -1){
@@ -162,14 +154,17 @@ public class LocalDbHelper extends SQLiteOpenHelper {
 
     public List<RatesModel> getAllCurrency(){
         List<RatesModel> ratesModelList = new ArrayList<RatesModel>();
+        RatesModel ratesModel = new RatesModel();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TB_RATES;
 
-        String selectQuery = "SELECT ROWID, * FROM " + TB_RATES;
-        SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.rawQuery(selectQuery, null);
-        if(cursor != null && cursor.getCount() > -1){
+        Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
+                +cursor.getCount());
+        //if(cursor != null && cursor.getCount() > -1){
             while (cursor.moveToNext()){
-                RatesModel ratesModel = new RatesModel();
+
                 Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
                         +cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID))
                         +cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME))
@@ -180,7 +175,9 @@ public class LocalDbHelper extends SQLiteOpenHelper {
                 ratesModel.setRate(cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
                 ratesModelList.add(ratesModel);
             }
-        }
+            cursor.close();
+            db.close();
+        //}
         return ratesModelList;
     }
 
@@ -202,6 +199,7 @@ public class LocalDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //db.delete(TB_CART_ITEMS, null, null);
         db.execSQL("delete from "+ TB_CART_ITEMS);
+        db.execSQL("delete from "+ TB_RATES);
         db.execSQL("vacuum");
     }
 }

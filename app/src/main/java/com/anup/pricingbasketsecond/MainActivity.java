@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity{
     private List<ItemGridViewObject> getAllItemList(){
 
         List<ItemGridViewObject> allItems = new ArrayList<ItemGridViewObject>();
-        allItems.add(new ItemGridViewObject(R.drawable.beans, "Beans", 73 ));
-        allItems.add(new ItemGridViewObject(R.drawable.greenpeas, "Peas", 95));
+        allItems.add(new ItemGridViewObject(R.drawable.beans, "Beans", .73 ));
+        allItems.add(new ItemGridViewObject(R.drawable.greenpeas, "Peas", .95));
         allItems.add(new ItemGridViewObject(R.drawable.eggs, "Eggs", 2.10));
         allItems.add(new ItemGridViewObject(R.drawable.milk, "Milk", 1.30));
 
