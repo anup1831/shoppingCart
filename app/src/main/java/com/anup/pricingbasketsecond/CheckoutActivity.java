@@ -1,11 +1,8 @@
 package com.anup.pricingbasketsecond;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -13,8 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.anup.pricingbasketsecond.dbutil.LocalDbHelper;
 import com.anup.pricingbasketsecond.models.DataFixer;
 import com.anup.pricingbasketsecond.models.Rates;
 import com.anup.pricingbasketsecond.models.RatesModel;
@@ -22,7 +19,6 @@ import com.anup.pricingbasketsecond.network.ApiInterface;
 import com.anup.pricingbasketsecond.network.RetrofitApiClient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -42,11 +38,11 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
     LocalDbHelper dbHelper;
     DataFixer dataFixer;
     Spinner currencySpinner;
-    TextView tv_total;
-    List<RatesModel> ratesModelList;
+    TextView tv_total, tv_exchangeTotal;
+    List<RatesModel> ratesModelList, currencyModelList;
     RatesModel ratesModel;
     double totalPrice;
-    String qty;
+    int qty;
     double currencyValue;
 
     public double getCurrencyValue() {
@@ -70,23 +66,27 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
         Intent intent = getIntent();
-        qty = intent.getStringExtra("QTY");
+        qty = Integer.parseInt(intent.getStringExtra("QTY"));
         object = intent.getParcelableExtra("INTENT_OBJECT");
         getJsonDataFromFixer();
         dataFixer = new DataFixer();
         tv_total = (TextView) findViewById(R.id.tv_total);
-        int qtty = Integer.parseInt(qty);
-        Log.i("Anup", "Error -"+ " getCurrencyValue"+getCurrencyValue()+
-                +object.getPrice());
-        Log.i("Anup", "Error -"+ qtty);
+        if(qty == 0){
+            tv_total.setText("Total - ");
+        } else{
+            totalPrice = qty*object.getPrice();
+            setTotalPrice(totalPrice);
+            tv_total.setText("Total - "+ totalPrice);
+        }
+        dbHelper = new LocalDbHelper(CheckoutActivity.this);
 
-        /*dbHelper = new LocalDbHelper(CheckoutActivity.this);
-        rowListItem = dbHelper.getAllCartItems();
         currencySpinner = (Spinner) findViewById(R.id.spinner1);
-        rView = (RecyclerView) findViewById(R.id.rc_cartview);
         tv_total = (TextView) findViewById(R.id.tv_total);
-
-        cartItemAdapter = new CartItemAdapter(CheckoutActivity.this, rowListItem);
+        tv_exchangeTotal = (TextView) findViewById(R.id.tv_exchange_total);
+        setUpCurrencySpinner();
+        //rowListItem = dbHelper.getAllCartItems();
+        //rView = (RecyclerView) findViewById(R.id.rc_cartview);
+        /*cartItemAdapter = new CartItemAdapter(CheckoutActivity.this, rowListItem);
         mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rView.setLayoutManager(mLayoutManager);
         rView.setItemAnimator(new DefaultItemAnimator());
@@ -139,20 +139,20 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
         jsonHeadCall.enqueue(new Callback<DataFixer>() {
             @Override
             public void onResponse(Call<DataFixer> call, Response<DataFixer> response) {
-                ratesModelList = new ArrayList<>();
+
+
                 boolean success = response.body().getSuccess();
                 dataFixer.setSuccess(response.body().getSuccess());
                 dataFixer.setBase(response.body().getBase());
                 dataFixer.setDate(response.body().getDate());
                 dataFixer.setTimestamp(response.body().getTimestamp());
                 dataFixer.setRates(response.body().getRates());
-                ratesModelList.add(new RatesModel("USD", dataFixer.getRates().getUSD()));
-                ratesModelList.add(new RatesModel("AUD", dataFixer.getRates().getAUD()));
-                ratesModelList.add(new RatesModel("CAD", dataFixer.getRates().getCAD()));
-                ratesModelList.add(new RatesModel("PLZ", dataFixer.getRates().getPLN()));
-                ratesModelList.add(new RatesModel("MXN", dataFixer.getRates().getMXN()));
+                addCurrencyRatesInDB(response.body());
+
+
+
                 Log.i("Anup", "status -"+success + " - "+dataFixer.getRates().getAUD() + " - "+ratesModelList.size());
-                setUpCurrencySpinner(ratesModelList);
+               // setUpCurrencySpinner(ratesModelList);
             }
 
             @Override
@@ -162,11 +162,22 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
         });
     }
 
-    private void setUpCurrencySpinner(List<RatesModel> rModelList) {
-        List<RatesModel> ratesModels = rModelList;
+    private void addCurrencyRatesInDB(DataFixer rates) {
+        RatesModel model = new RatesModel();
+        ratesModelList = new ArrayList<>();
+        ratesModelList.add(new RatesModel("USD", rates.getRates().getUSD()));
+        ratesModelList.add(new RatesModel("AUD", rates.getRates().getAUD()));
+        ratesModelList.add(new RatesModel("CAD", rates.getRates().getCAD()));
+        ratesModelList.add(new RatesModel("PLN", rates.getRates().getPLN()));
+        ratesModelList.add(new RatesModel("MXN", rates.getRates().getMXN()));
+        dbHelper.insertExhangeRatesIntoDB(ratesModelList);
+    }
+
+    private void setUpCurrencySpinner() {
+         currencyModelList = dbHelper.getAllCurrency();
         List<String> currencyName = new ArrayList<>();
 
-        for (RatesModel ratemodel: ratesModels) {
+        for (RatesModel ratemodel: currencyModelList) {
             currencyName.add(ratemodel.getCurrenyName());
             Log.i("Anup", "SpinneItem- "+ratemodel.getCurrenyName());
         }
@@ -188,17 +199,20 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(parent.getItemAtPosition(position).equals("USD")){
-            setCurrencyValue(dataFixer.getRates().getUSD());
-        } else if (parent.getItemAtPosition(position).equals("AUD")){
-            setCurrencyValue(dataFixer.getRates().getAUD());
-        }else if (parent.getItemAtPosition(position).equals("CAD")){
-            setCurrencyValue(dataFixer.getRates().getCAD());
-        }else if (parent.getItemAtPosition(position).equals("PLZ")){
-            setCurrencyValue(dataFixer.getRates().getPLN());
-        }else if (parent.getItemAtPosition(position).equals("MXN")){
-            setCurrencyValue(dataFixer.getRates().getMXN());
+        for (RatesModel model:currencyModelList) {
+            if(parent.getItemAtPosition(position).equals("USD")){
+                setCurrencyValue(model.getRate());
+            } else if (parent.getItemAtPosition(position).equals("AUD")){
+                setCurrencyValue(model.getRate());
+            }else if (parent.getItemAtPosition(position).equals("CAD")){
+                setCurrencyValue(model.getRate());
+            }else if (parent.getItemAtPosition(position).equals("PLN")){
+                setCurrencyValue(model.getRate());
+            }else if (parent.getItemAtPosition(position).equals("MXN")){
+                setCurrencyValue(model.getRate());
+            }
         }
+        tv_exchangeTotal.setText("After Exchange Total : "+getTotalPrice() * getCurrencyValue());
         Log.i("Anup", "SpinneItemSelected itemAtPosition- "+parent.getItemAtPosition(position).toString()
         + "getSelectedItem "+parent.getSelectedItem().toString() + " total- "+getTotalPrice());
 

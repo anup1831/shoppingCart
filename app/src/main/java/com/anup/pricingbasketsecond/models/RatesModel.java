@@ -5,12 +5,29 @@ package com.anup.pricingbasketsecond.models;
  */
 
 public class RatesModel {
+    private int id;
     private String currenyName;
     private double rate;
+
+    public RatesModel() {
+    }
 
     public RatesModel(String currenyName, double rate) {
         this.currenyName = currenyName;
         this.rate = rate;
+    }
+    public RatesModel(int id, String currenyName, double rate) {
+        this.id = id;
+        this.currenyName = currenyName;
+        this.rate = rate;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCurrenyName() {
