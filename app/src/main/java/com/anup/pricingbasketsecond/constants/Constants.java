@@ -1,4 +1,4 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.constants;
 
 /**
  * Created by Anup on 5/21/2018.

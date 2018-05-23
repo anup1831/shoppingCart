@@ -8,7 +8,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import java.io.Serializable;
+import com.anup.pricingbasketsecond.adapter.RecyclerViewAdapter;
+import com.anup.pricingbasketsecond.models.ItemGridViewObject;
+
 import java.util.ArrayList;
 import java.util.List;
 

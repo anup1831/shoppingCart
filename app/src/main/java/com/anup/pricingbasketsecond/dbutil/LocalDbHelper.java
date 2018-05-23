@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.anup.pricingbasketsecond.CartItemsModel;
+import com.anup.pricingbasketsecond.models.CartItemsModel;
 import com.anup.pricingbasketsecond.models.RatesModel;
 
 import java.util.ArrayList;
@@ -155,14 +155,16 @@ public class LocalDbHelper extends SQLiteOpenHelper {
     public List<RatesModel> getAllCurrency(){
         List<RatesModel> ratesModelList = new ArrayList<RatesModel>();
         RatesModel ratesModel = new RatesModel();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TB_RATES;
+        SQLiteDatabase db = getReadableDatabase();
 
-
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
-                +cursor.getCount());
-        //if(cursor != null && cursor.getCount() > -1){
+        if(db.isOpen()){
+            Log.i("Anup", "isDbOpen "
+                    +db.isOpen());
+            String selectQuery = "SELECT * FROM " + TB_RATES;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
+                    +cursor.getCount());
+            //if(cursor != null && cursor.getCount() > -1){
             while (cursor.moveToNext()){
 
                 Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
@@ -176,6 +178,7 @@ public class LocalDbHelper extends SQLiteOpenHelper {
                 ratesModelList.add(ratesModel);
             }
             cursor.close();
+        }
             db.close();
         //}
         return ratesModelList;

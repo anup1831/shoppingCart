@@ -11,17 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.anup.pricingbasketsecond.adapter.CartItemAdapter;
 import com.anup.pricingbasketsecond.dbutil.LocalDbHelper;
+import com.anup.pricingbasketsecond.models.CartItemsModel;
 import com.anup.pricingbasketsecond.models.DataFixer;
-import com.anup.pricingbasketsecond.models.Rates;
+import com.anup.pricingbasketsecond.models.ItemGridViewObject;
 import com.anup.pricingbasketsecond.models.RatesModel;
 import com.anup.pricingbasketsecond.network.ApiInterface;
 import com.anup.pricingbasketsecond.network.RetrofitApiClient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,8 +67,9 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout);
         getJsonDataFromFixer();
+        Log.i("Anup", " onCreateCalled");
+        setContentView(R.layout.activity_checkout);
         initializeDataMembers();
         initView();
 
@@ -79,9 +80,7 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
             setTotalPrice(totalPrice);
             tv_total.setText("Total - "+ totalPrice);
         }
-        LocalDbHelper dbHelper = new LocalDbHelper(CheckoutActivity.this);
-        fetchRatesDataList = dbHelper.getAllCurrency();
-        setUpCurrencySpinner(fetchRatesDataList);
+
         //rowListItem = dbHelper.getAllCartItems();
         //rView = (RecyclerView) findViewById(R.id.rc_cartview);
         /*cartItemAdapter = new CartItemAdapter(CheckoutActivity.this, rowListItem);
@@ -122,6 +121,13 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
     @Override
     protected void onResume() {
         super.onResume();
+        LocalDbHelper dbHelper = new LocalDbHelper(CheckoutActivity.this);
+        fetchRatesDataList = dbHelper.getAllCurrency();
+        Log.i("Anup", " onResumeCalled -fetchRatesDataList"+ " - "+fetchRatesDataList.size());
+        for (RatesModel rates:fetchRatesDataList) {
+            Log.i("Anup", " onResumeCalled -fetchRatesDataList data"+ " - "+rates.getCurrenyName()+" - "+rates.getRate());
+        }
+        setUpCurrencySpinner(fetchRatesDataList);
 /*
         cartItemAdapter.setOnItemClickListener(new CartItemAdapter.OnRecyclerCartViewClickListener() {
             @Override
@@ -184,12 +190,18 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
         });
     }
 
-    private void setUpCurrencySpinner(List<RatesModel> rateslList) {
+    private void setUpCurrencySpinner(List<RatesModel> ratesList) {
 
-       for (int i = 0; i< rateslList.size(); i++){
-           cName.add(rateslList.get(i).getCurrenyName());
+       for (int i = 0; i< ratesList.size(); i++){
+           cName.add(ratesList.get(i).getCurrenyName());
        }
-        Log.i("Anup", "Error -"+cName.size() + " - "+rateslList.size());
+        Log.i("Anup", "cname& -"+cName.size() + " - "+ratesList.size());
+        for (int i = 0; i< ratesList.size(); i++){
+            Log.i("Anup", "setUpCurrencySpinner ratesList - "+ratesList.get(i).getCurrenyName() + " - "+ratesList.get(i).getRate());
+        }
+        for (int i = 0; i< cName.size(); i++){
+            Log.i("Anup", "setUpCurrencySpinner cName - "+cName.get(i).toString());
+        }
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, cName);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

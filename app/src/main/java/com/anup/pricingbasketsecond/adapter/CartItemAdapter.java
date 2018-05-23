@@ -1,4 +1,4 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.anup.pricingbasketsecond.R;
+import com.anup.pricingbasketsecond.models.CartItemsModel;
 
 import java.util.List;
 

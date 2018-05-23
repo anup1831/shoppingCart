@@ -1,4 +1,4 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.models;
 
 /**
  * Created by Anup on 5/22/2018.

@@ -1,16 +1,13 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageView;
-
-import java.io.Serializable;
 
 /**
  * Created by Anup on 5/20/2018.
  */
 
-class ItemGridViewObject implements /*Serializable*/ Parcelable{
+public class ItemGridViewObject implements /*Serializable*/ Parcelable{
     private int imageView;
     private String name;
     private double price;
