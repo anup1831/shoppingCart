@@ -81,7 +81,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.onItemClickListener = onItemClickListener;
     }
 
-    interface OnRecyclerViewClickListener{
+    public interface OnRecyclerViewClickListener{
 
         void onItemClick(Context context, ItemGridViewObject itemAtPosition);
     }

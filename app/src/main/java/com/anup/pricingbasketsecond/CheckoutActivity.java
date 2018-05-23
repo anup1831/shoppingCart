@@ -121,13 +121,13 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
     @Override
     protected void onResume() {
         super.onResume();
-        LocalDbHelper dbHelper = new LocalDbHelper(CheckoutActivity.this);
+        /*LocalDbHelper dbHelper = new LocalDbHelper(CheckoutActivity.this);
         fetchRatesDataList = dbHelper.getAllCurrency();
         Log.i("Anup", " onResumeCalled -fetchRatesDataList"+ " - "+fetchRatesDataList.size());
         for (RatesModel rates:fetchRatesDataList) {
             Log.i("Anup", " onResumeCalled -fetchRatesDataList data"+ " - "+rates.getCurrenyName()+" - "+rates.getRate());
         }
-        setUpCurrencySpinner(fetchRatesDataList);
+        setUpCurrencySpinner(fetchRatesDataList);*/
 /*
         cartItemAdapter.setOnItemClickListener(new CartItemAdapter.OnRecyclerCartViewClickListener() {
             @Override
@@ -180,6 +180,13 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
                 ratesModelList.add(new RatesModel("MXN", response.body().getRates().getMXN()));
                 dbHelper.insertExhangeRatesIntoDB(ratesModelList);
                 //addCurrencyRatesInDB(response.body());
+                //LocalDbHelper dbHelper = new LocalDbHelper(CheckoutActivity.this);
+                fetchRatesDataList = dbHelper.getAllCurrency();
+                Log.i("Anup", " onResumeCalled -fetchRatesDataList"+ " - "+fetchRatesDataList.size());
+                for (RatesModel rates:fetchRatesDataList) {
+                    Log.i("Anup", " onResumeCalled -fetchRatesDataList data"+ " - "+rates.getCurrenyName()+" - "+rates.getRate());
+                }
+                setUpCurrencySpinner(fetchRatesDataList);
 
             }
 
@@ -195,13 +202,7 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
        for (int i = 0; i< ratesList.size(); i++){
            cName.add(ratesList.get(i).getCurrenyName());
        }
-        Log.i("Anup", "cname& -"+cName.size() + " - "+ratesList.size());
-        for (int i = 0; i< ratesList.size(); i++){
-            Log.i("Anup", "setUpCurrencySpinner ratesList - "+ratesList.get(i).getCurrenyName() + " - "+ratesList.get(i).getRate());
-        }
-        for (int i = 0; i< cName.size(); i++){
-            Log.i("Anup", "setUpCurrencySpinner cName - "+cName.get(i).toString());
-        }
+
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, cName);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

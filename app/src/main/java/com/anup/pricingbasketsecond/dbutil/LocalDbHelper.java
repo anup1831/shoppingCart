@@ -19,7 +19,7 @@ import java.util.List;
 
 public class LocalDbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "cart";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
     //Table details - cart_items
     public static final String TB_CART_ITEMS = "cart_Items";
     public static final String ID = "id";
@@ -154,7 +154,7 @@ public class LocalDbHelper extends SQLiteOpenHelper {
 
     public List<RatesModel> getAllCurrency(){
         List<RatesModel> ratesModelList = new ArrayList<RatesModel>();
-        RatesModel ratesModel = new RatesModel();
+        RatesModel ratesMode;
         SQLiteDatabase db = getReadableDatabase();
 
         if(db.isOpen()){
@@ -165,18 +165,33 @@ public class LocalDbHelper extends SQLiteOpenHelper {
             Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
                     +cursor.getCount());
             //if(cursor != null && cursor.getCount() > -1){
-            while (cursor.moveToNext()){
+            if (cursor.moveToFirst()) {
+                do {
+                    ratesMode = new RatesModel();
+                    Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
+                            +cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID))
+                            +cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME))
+                            +cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
 
+                    ratesMode.setId(cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID)));
+                    ratesMode.setCurrenyName(cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME)));
+                    ratesMode.setRate(cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
+                    ratesModelList.add(ratesMode);
+                } while (cursor.moveToNext());
+            }
+            /*while (cursor.moveToNext()){
+                ratesMode = new RatesModel();
                 Log.i("Anup", "fetched CartItems ID, NAME, PRICE, QTY "
                         +cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID))
                         +cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME))
                         +cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
 
-                ratesModel.setId(cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID)));
-                ratesModel.setCurrenyName(cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME)));
-                ratesModel.setRate(cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
-                ratesModelList.add(ratesModel);
-            }
+                ratesMode.setId(cursor.getInt(cursor.getColumnIndex(LocalDbHelper.CURRENCY_ID)));
+                ratesMode.setCurrenyName(cursor.getString(cursor.getColumnIndex(LocalDbHelper.CURRENCY_NAME)));
+                ratesMode.setRate(cursor.getDouble(cursor.getColumnIndex(LocalDbHelper.EXCHANGE_RATE)));
+                ratesModelList.add(ratesMode);
+                return ratesModelList;
+            }*/
             cursor.close();
         }
             db.close();

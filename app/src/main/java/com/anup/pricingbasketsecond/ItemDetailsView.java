@@ -68,6 +68,7 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
         tv_priceValue.setText(""+object.getPrice());
 
         et_qty = (EditText) findViewById(R.id.et_qty_value);
+        et_qty.requestFocus();
         et_qty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
