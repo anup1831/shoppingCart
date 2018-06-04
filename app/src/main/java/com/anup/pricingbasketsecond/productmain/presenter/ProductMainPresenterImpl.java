@@ -1,12 +1,8 @@
 package com.anup.pricingbasketsecond.productmain.presenter;
 
-import android.util.Log;
-
 import com.anup.pricingbasketsecond.models.ItemGridViewObject;
 import com.anup.pricingbasketsecond.productmain.ProductMainView;
 import com.anup.pricingbasketsecond.productmain.interactor.ProductMainInteractor;
-import com.anup.pricingbasketsecond.productmain.interactor.ProductMainInteractorImpl;
-import com.anup.pricingbasketsecond.productmain.repository.disk.DiskDataSource;
 
 import java.util.List;
 
@@ -16,59 +12,40 @@ import java.util.List;
 
 public class ProductMainPresenterImpl implements ProductMainPresenter, ProductMainInteractor.OnFinishedListener {
     public static final String TAG = ProductMainPresenterImpl.class.getSimpleName();
-    private ProductMainInteractor productMainInteractor;
-    private ProductMainView productMainView;
+    private ProductMainView mainView;
+    private ProductMainInteractor interactor;
 
-    public ProductMainPresenterImpl(ProductMainInteractor productMainInteractor, ProductMainView productMainView) {
-        this.productMainInteractor = productMainInteractor;
-        this.productMainView = productMainView;
+    public ProductMainPresenterImpl(ProductMainView mainView, ProductMainInteractor interactor) {
+        this.mainView = mainView;
+        this.interactor = interactor;
     }
 
-    /*public ProductMainPresenterImpl(ProductMainView productView) {
-        this.productMainView = productView;
-        this.productMainInteractor = productMainInteractor;
-    }*/
+    @Override
+    public void onFinished(List<ItemGridViewObject> productList) {
+        if (mainView != null){
+            mainView.setProductGridList(productList);
+            mainView.hideFullScreenLoading();
+        }
+    }
 
     @Override
-    public void onGridViewClick(int position) {
-        if (productMainView != null) {
-            productMainView.showMessage(String.format("Position %d clicked", position + 1));
+    public void onGridViewClick(ItemGridViewObject itemAtposition) {
+        if (mainView != null) {
+            mainView.setItemObject(itemAtposition);
+            //mainView.showMessage(String.format("Position %d clicked", "Clicked"));
         }
     }
 
     @Override
     public void onResume() {
-        if (productMainView != null) {
-            productMainView.showFullScreenLoading();
+        if (mainView != null) {
+            mainView.showFullScreenLoading();
         }
+        interactor.getProductItem(this);
     }
 
     @Override
     public void onDestroy() {
-        productMainView = null;
+        mainView = null;
     }
-
-    @Override
-    public void onFinished(List<ItemGridViewObject> productList) {
-        if (productMainView != null) {
-            productMainView.onProductGridListReceived(productList);
-            productMainView.hideFullScreenLoading();
-        }
-    }
-    //Testing view purpose
-    public ProductMainView getMainView() {
-        return productMainView;
-    }
-
-   /* @Override
-    public ItemGridViewObject getGridViewObject() {
-        return null;
-    }*/
-
-    /*@Override
-    public void onAttach(ProductMainView mainView) {
-        this.productMainView = mainView;
-    }*/
-
-
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anup.pricingbasketsecond.R;
@@ -36,10 +37,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerViewHolder holder, final int position) {
+
         holder.imageView.setImageResource(itemList.get(position).getImageView());
         holder.textView.setText(itemList.get(position).getName());
         holder.textviewPrice.setText(""+itemList.get(position).getPrice());
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickListener.onItemClick(itemList.get(position));
+            }
+        });
     }
 
   /*  @Override
@@ -52,29 +60,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return itemList.size();
     }
 
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class RecyclerViewHolder extends RecyclerView.ViewHolder/* implements View.OnClickListener*/ {
 
         ImageView imageView;
         TextView textView;
         TextView textviewPrice;
+        RelativeLayout relativeLayout;
         //com.anup.pricingbasketsecond.RecyclerViewHolder.OnRecyclerViewClickListener onItemClickListener;
         public RecyclerViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
+            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.rl_grid);
             imageView = (ImageView) itemView.findViewById(R.id.iv_item_image);
             textView = (TextView) itemView.findViewById(R.id.tv_item_name);
             textviewPrice = (TextView) itemView.findViewById(R.id.tv_item_price);
+            //relativeLayout.setOnClickListener(this);
         }
 
 
 
-        @Override
+       /* @Override
         public void onClick(View v) {
-            onItemClickListener.onItemClick(v.getContext(), itemList.get(getAdapterPosition()));
+            onItemClickListener.onItemClick(itemList.get(getAdapterPosition()));
             // Toast.makeText(v.getContext(), "ItemClickedATPosition -" + getPosition(), Toast.LENGTH_LONG).show();
-        }
-
-
+        }*/
     }
 
     public void setOnItemClickListener(OnRecyclerViewClickListener onItemClickListener) {
@@ -83,6 +91,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public interface OnRecyclerViewClickListener{
 
-        void onItemClick(Context context, ItemGridViewObject itemAtPosition);
+        void onItemClick(ItemGridViewObject itemAtPosition);
     }
 }

@@ -17,6 +17,7 @@ import com.anup.pricingbasketsecond.productmain.ProductMainView;
 import com.anup.pricingbasketsecond.productmain.interactor.ProductMainInteractorImpl;
 import com.anup.pricingbasketsecond.productmain.presenter.ProductMainPresenter;
 import com.anup.pricingbasketsecond.productmain.presenter.ProductMainPresenterImpl;
+import com.anup.pricingbasketsecond.utils.FullScreenLoading;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,77 +33,51 @@ public class MainActivity extends AppCompatActivity implements ProductMainView, 
     ProductMainPresenter presenter;
     RecyclerView rView;
     private ProgressBar progressBar;
+    private FullScreenLoading progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initPresenter();
-        //List<ItemGridViewObject> rowListItem = getAllItemList();
-        lLayout = new GridLayoutManager(getApplicationContext(), 2);
+        initUI();
 
+    }
+
+    private void initUI(){
         progressBar = (ProgressBar) findViewById(R.id.progress);
         rView = (RecyclerView) findViewById(R.id.rc_view);
-
+        lLayout = new GridLayoutManager(getApplicationContext(), 2);
+        progressDialog = new FullScreenLoading(this);
     }
 
     private void initPresenter() {
         //presenter.onAttach(this);
         Log.i(TAG, "Anup - initialize Presenter Impl");
-        presenter = new ProductMainPresenterImpl(new ProductMainInteractorImpl(), this);
+        presenter = new ProductMainPresenterImpl(this, new ProductMainInteractorImpl());
     }
 
-   /* private List<ItemGridViewObject> getAllItemList(){
-
-        List<ItemGridViewObject> allItems = new ArrayList<ItemGridViewObject>();
-        allItems.add(new ItemGridViewObject(R.drawable.beans, "Beans", .73 ));
-        allItems.add(new ItemGridViewObject(R.drawable.greenpeas, "Peas", .95));
-        allItems.add(new ItemGridViewObject(R.drawable.eggs, "Eggs", 2.10));
-        allItems.add(new ItemGridViewObject(R.drawable.milk, "Milk", 1.30));
-
-        return allItems;
-    }*/
-
-/*    @Override
+    @Override
     protected void onResume() {
         super.onResume();
-        *//*rcAdapter.setOnItemClickListener(new RecyclerViewAdapter.OnRecyclerViewClickListener() {
-            @Override
-            public void onItemClick(Context context, ItemGridViewObject position) {
-                Toast.makeText(context.getApplicationContext(), "ItemATPosition - " + position.getName() +
-                        position.getPrice()+ " - "+position.getImageView(), Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(MainActivity.this, ItemDetailsView.class);
-                intent.putExtra("INTENT_OBJECT", position);
-                startActivity(intent);
-            }
-        });*//*
-    }*/
+        presenter.onResume();
+    }
 
     @Override
-    public void onProductGridListReceived(List<ItemGridViewObject> gridViewObjectList) {
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
+    @Override
+    public void setProductGridList(List<ItemGridViewObject> gridViewObjectList) {
         Log.i(TAG, "ProductList - "+gridViewObjectList.size());
         rowListItem = gridViewObjectList;
         rcAdapter = new RecyclerViewAdapter(MainActivity.this, gridViewObjectList);
+        rcAdapter.setOnItemClickListener(this);
         rView.setHasFixedSize(true);
         rView.setLayoutManager(lLayout);
         rView.setAdapter(rcAdapter);
     }
-
-   /* @Override
-    public void onItemDetailsViewStartListener(ItemGridViewObject itemGridViewObject) {
-        *//*rcAdapter.setOnItemClickListener(new RecyclerViewAdapter.OnRecyclerViewClickListener() {
-            @Override
-            public void onItemClick(Context context, ItemGridViewObject position) {
-                Toast.makeText(context.getApplicationContext(), "ItemATPosition - " + position.getName() +
-                        position.getPrice()+ " - "+position.getImageView(), Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(MainActivity.this, ItemDetailsView.class);
-                intent.putExtra("INTENT_OBJECT", position);
-                startActivity(intent);
-            }
-        });*//*
-        Intent intent = new Intent(MainActivity.this, ItemDetailsView.class);
-        intent.putExtra("INTENT_OBJECT", itemGridViewObject);
-        startActivity(intent);
-    }*/
 
     @Override
     public void showEmptyView() {
@@ -127,25 +102,38 @@ public class MainActivity extends AppCompatActivity implements ProductMainView, 
 
     @Override
     public void showFullScreenLoading() {
-        progressBar.setVisibility(View.VISIBLE);
-        rView.setVisibility(View.INVISIBLE);
+       /* progressBar.setVisibility(View.VISIBLE);
+        rView.setVisibility(View.INVISIBLE);*/
+        if(progressDialog != null && !progressDialog.isShowing()){
+            progressDialog.show();
+        }
     }
 
     @Override
     public void hideFullScreenLoading() {
-        progressBar.setVisibility(View.INVISIBLE);
-        rView.setVisibility(View.VISIBLE);
+        /*progressBar.setVisibility(View.INVISIBLE);
+        rView.setVisibility(View.VISIBLE);*/
+        if(progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
     }
 
-    @Override
+    /*@Override
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }*/
+
+    @Override
+    public void setItemObject(ItemGridViewObject itemAtposition) {
+        Toast.makeText(this, itemAtposition.getName() + " - "+itemAtposition.getImageView() + " - "+itemAtposition.getPrice(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(MainActivity.this, ItemDetailsView.class);
+        intent.putExtra("INTENT_OBJECT", itemAtposition);
+        startActivity(intent);
     }
 
     @Override
-    public void onItemClick(Context context, ItemGridViewObject itemAtPosition) {
-        //if get whole object pass it to next screen
-        Toast.makeText(this, itemAtPosition.getName(), Toast.LENGTH_LONG).show();
+    public void onItemClick(ItemGridViewObject itemAtPosition) {
+        presenter.onGridViewClick(itemAtPosition);
     }
 
    /* public String loadJSONFromAsset() {

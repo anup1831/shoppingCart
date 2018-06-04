@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProductMainView {
 
     //Show product
-    void onProductGridListReceived(List<ItemGridViewObject> gridViewObjectList);
+    void setProductGridList(List<ItemGridViewObject> gridViewObjectList);
 
     //handle gridview click
 //    void onItemDetailsViewStartListener(ItemGridViewObject itemGridViewObject);
@@ -28,5 +28,7 @@ public interface ProductMainView {
     //Hide LoadingScreen
     void hideFullScreenLoading();
 
-    void showMessage(String format);
+   // void showMessage(String message);
+
+    void setItemObject(ItemGridViewObject itemAtposition);
 }
