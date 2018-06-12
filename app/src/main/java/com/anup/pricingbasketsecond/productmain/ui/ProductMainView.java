@@ -1,4 +1,4 @@
-package com.anup.pricingbasketsecond.productmain;
+package com.anup.pricingbasketsecond.productmain.ui;
 
 import com.anup.pricingbasketsecond.models.ItemGridViewObject;
 
@@ -28,7 +28,7 @@ public interface ProductMainView {
     //Hide LoadingScreen
     void hideFullScreenLoading();
 
-   // void showMessage(String message);
+    void showMessage(String message);
 
-    void setItemObject(ItemGridViewObject itemAtposition);
+    void navigateToDetailsScreenWithIntentObject(ItemGridViewObject itemAtposition);
 }

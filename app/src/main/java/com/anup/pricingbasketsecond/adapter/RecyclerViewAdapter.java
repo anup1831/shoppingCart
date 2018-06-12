@@ -46,6 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 onItemClickListener.onItemClick(itemList.get(position));
+                onItemClickListener.getItemPosition(position);
             }
         });
     }
@@ -92,5 +93,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public interface OnRecyclerViewClickListener{
 
         void onItemClick(ItemGridViewObject itemAtPosition);
+        void getItemPosition(int position);
     }
 }

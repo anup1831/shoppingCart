@@ -1,6 +1,7 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.itemdetails;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,15 +14,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anup.pricingbasketsecond.CheckoutActivity;
+import com.anup.pricingbasketsecond.R;
 import com.anup.pricingbasketsecond.dbutil.LocalDbHelper;
+import com.anup.pricingbasketsecond.itemdetails.interactor.ItemDetailsInteractorImpl;
+import com.anup.pricingbasketsecond.itemdetails.presenter.ItemDetailsPresenter;
+import com.anup.pricingbasketsecond.itemdetails.presenter.ItemDetailsPresenterImpl;
 import com.anup.pricingbasketsecond.models.CartItemsModel;
 import com.anup.pricingbasketsecond.models.ItemGridViewObject;
+import com.anup.pricingbasketsecond.utils.FullScreenLoading;
 
 /**
  * Created by Anup on 5/21/2018.
  */
 
-public class ItemDetailsView extends Activity implements View.OnClickListener {
+public class ItemDetailsScreen extends Activity implements ItemDetailsView, View.OnClickListener {
     TextView tv_nameValue, tv_priceValue;
     EditText et_qty;
     Button btnAddToCart, btnCheckout;
@@ -30,8 +37,9 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
     String enteredQty;
     //private MySharedPreference sharedPreference;
     LocalDbHelper dbHelper;
-
-    //private Controller controller=null;
+    private FullScreenLoading progressDialog;
+    private ItemDetailsPresenter presenter;
+    private ItemDetailsView itemDetailsView;
 
     public String getEnteredQty() {
         return enteredQty;
@@ -47,14 +55,20 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_item_details);
         Intent intent = getIntent();
         object = (ItemGridViewObject) intent.getParcelableExtra("INTENT_OBJECT");
-        //sharedPreference = new MySharedPreference(ItemDetailsView.this);
-        dbHelper = new LocalDbHelper(ItemDetailsView.this);
+        initPresenter();
+        //sharedPreference = new MySharedPreference(ItemDetailsScreen.this);
+        dbHelper = new LocalDbHelper(ItemDetailsScreen.this);
         initView();
 
         //controller = (Controller) getApplicationContext();
     }
 
+    private void initPresenter() {
+        presenter = new ItemDetailsPresenterImpl(this, new ItemDetailsInteractorImpl());
+    }
+
     private void initView() {
+        progressDialog = new FullScreenLoading(this);
         imageView = (ImageView)findViewById(R.id.iv_display);
         tv_nameValue = (TextView) findViewById(R.id.tv_item_tag_value);
         tv_priceValue = (TextView) findViewById(R.id.tv_item_price_tag_value);
@@ -97,10 +111,10 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if(v.getId() == R.id.add_to_cart){
             if(!(et_qty.getText().toString().equals(null)) || !(et_qty.getText().toString() == null)){
-
+                presenter.validateQty(getContext(), object, et_qty.getText().toString());
                 btnCheckout.setText("CHECKOUT - "+et_qty.getText().toString());
                 setEnteredQty(et_qty.getText().toString());
-                insertCartItemData(et_qty.getText().toString());
+                //insertCartItemData(et_qty.getText().toString());
 
                 Toast.makeText(getApplicationContext(), ""+getEnteredQty(), Toast.LENGTH_SHORT).show();
             } else{
@@ -108,14 +122,14 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
             }
 
         } else if (v.getId() == R.id.checkout){
-            Intent intent = new Intent(ItemDetailsView.this, CheckoutActivity.class);
+            /*Intent intent = new Intent(ItemDetailsScreen.this, CheckoutActivity.class);
             intent.putExtra("QTY", getEnteredQty());
             intent.putExtra("INTENT_OBJECT", object);
-            startActivity(intent);
+            startActivity(intent);*/
         }
     }
 
-    private void insertCartItemData(String qty) {
+    /*private void insertCartItemData(String qty) {
 
         CartItemsModel cartItemsModel = new CartItemsModel();
         Log.i("Anup", "IDV "+object.getImageView());
@@ -124,5 +138,57 @@ public class ItemDetailsView extends Activity implements View.OnClickListener {
         cartItemsModel.setItemPrice(String.valueOf(object.getPrice()));
         cartItemsModel.setQty(qty);
         dbHelper.insertDataIntoDB(cartItemsModel);
+    }*/
+
+    @Override
+    public void showFullScreenLoading() {
+        if(progressDialog != null && !progressDialog.isShowing()){
+            progressDialog.show();
+        }
+    }
+
+    @Override
+    public void hideFullscreenLoading() {
+        if(progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void showQtyEtError() {
+        et_qty.setError("Quantity can not be empty!");
+    }
+
+    @Override
+    public void navigateToCheckoutScreen() {
+        Intent intent = new Intent(getContext(), CheckoutActivity.class);
+        intent.putExtra("QTY", getEnteredQty());
+        intent.putExtra("INTENT_OBJECT", object);
+        startActivity(intent);
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(progressDialog.isShowing())
+            presenter.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (progressDialog.isShowing())
+            presenter.onDestroy();
     }
 }

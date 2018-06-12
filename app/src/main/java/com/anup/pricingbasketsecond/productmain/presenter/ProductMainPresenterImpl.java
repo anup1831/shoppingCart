@@ -1,7 +1,7 @@
 package com.anup.pricingbasketsecond.productmain.presenter;
 
 import com.anup.pricingbasketsecond.models.ItemGridViewObject;
-import com.anup.pricingbasketsecond.productmain.ProductMainView;
+import com.anup.pricingbasketsecond.productmain.ui.ProductMainView;
 import com.anup.pricingbasketsecond.productmain.interactor.ProductMainInteractor;
 
 import java.util.List;
@@ -31,8 +31,7 @@ public class ProductMainPresenterImpl implements ProductMainPresenter, ProductMa
     @Override
     public void onGridViewClick(ItemGridViewObject itemAtposition) {
         if (mainView != null) {
-            mainView.setItemObject(itemAtposition);
-            //mainView.showMessage(String.format("Position %d clicked", "Clicked"));
+            mainView.navigateToDetailsScreenWithIntentObject(itemAtposition);
         }
     }
 
@@ -47,5 +46,10 @@ public class ProductMainPresenterImpl implements ProductMainPresenter, ProductMa
     @Override
     public void onDestroy() {
         mainView = null;
+    }
+
+    @Override
+    public void showMessageAtPosition(int position) {
+        mainView.showMessage(""+position);
     }
 }

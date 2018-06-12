@@ -25,7 +25,7 @@ public class ProductMainInteractorImpl implements ProductMainInteractor {
             public void run() {
                 listener.onFinished(getProductMain());
             }
-        }, 2000);
+        }, 1000);
 
     }
 

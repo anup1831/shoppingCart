@@ -1,27 +1,23 @@
-package com.anup.pricingbasketsecond;
+package com.anup.pricingbasketsecond.productmain.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.anup.pricingbasketsecond.itemdetails.ItemDetailsScreen;
+import com.anup.pricingbasketsecond.R;
 import com.anup.pricingbasketsecond.adapter.RecyclerViewAdapter;
 import com.anup.pricingbasketsecond.models.ItemGridViewObject;
-import com.anup.pricingbasketsecond.productmain.ProductMainView;
 import com.anup.pricingbasketsecond.productmain.interactor.ProductMainInteractorImpl;
 import com.anup.pricingbasketsecond.productmain.presenter.ProductMainPresenter;
 import com.anup.pricingbasketsecond.productmain.presenter.ProductMainPresenterImpl;
 import com.anup.pricingbasketsecond.utils.FullScreenLoading;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ProductMainView, RecyclerViewAdapter.OnRecyclerViewClickListener{
@@ -118,15 +114,15 @@ public class MainActivity extends AppCompatActivity implements ProductMainView, 
         }
     }
 
-    /*@Override
+    @Override
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }*/
+    }
 
     @Override
-    public void setItemObject(ItemGridViewObject itemAtposition) {
+    public void navigateToDetailsScreenWithIntentObject(ItemGridViewObject itemAtposition) {
         Toast.makeText(this, itemAtposition.getName() + " - "+itemAtposition.getImageView() + " - "+itemAtposition.getPrice(), Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(MainActivity.this, ItemDetailsView.class);
+        Intent intent = new Intent(MainActivity.this, ItemDetailsScreen.class);
         intent.putExtra("INTENT_OBJECT", itemAtposition);
         startActivity(intent);
     }
@@ -134,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements ProductMainView, 
     @Override
     public void onItemClick(ItemGridViewObject itemAtPosition) {
         presenter.onGridViewClick(itemAtPosition);
+    }
+
+    @Override
+    public void getItemPosition(int position) {
+        presenter.showMessageAtPosition(position);
     }
 
    /* public String loadJSONFromAsset() {
