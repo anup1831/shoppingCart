@@ -111,12 +111,9 @@ public class ItemDetailsScreen extends Activity implements ItemDetailsView, View
     public void onClick(View v) {
         if(v.getId() == R.id.add_to_cart){
             if(!(et_qty.getText().toString().equals(null)) || !(et_qty.getText().toString() == null)){
-                presenter.validateQty(getContext(), object, et_qty.getText().toString());
-                btnCheckout.setText("CHECKOUT - "+et_qty.getText().toString());
                 setEnteredQty(et_qty.getText().toString());
-                //insertCartItemData(et_qty.getText().toString());
+                presenter.validateQty(getContext(), object, getEnteredQty());
 
-                Toast.makeText(getApplicationContext(), ""+getEnteredQty(), Toast.LENGTH_SHORT).show();
             } else{
                 Toast.makeText(getApplicationContext(), "Enter Quantity!", Toast.LENGTH_SHORT).show();
             }
@@ -162,6 +159,7 @@ public class ItemDetailsScreen extends Activity implements ItemDetailsView, View
     @Override
     public void navigateToCheckoutScreen() {
         Intent intent = new Intent(getContext(), CheckoutActivity.class);
+        Log.i("Anup", "CheckoutActivity -putting to intent "+getEnteredQty());
         intent.putExtra("QTY", getEnteredQty());
         intent.putExtra("INTENT_OBJECT", object);
         startActivity(intent);
@@ -178,17 +176,24 @@ public class ItemDetailsScreen extends Activity implements ItemDetailsView, View
         super.onDestroy();
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
         if(progressDialog.isShowing())
-            presenter.onDestroy();
+            progressDialog.dismiss();
+    }
+*/
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         if (progressDialog.isShowing())
-            presenter.onDestroy();
+            progressDialog.dismiss();
     }
 }

@@ -94,7 +94,9 @@ public class CheckoutActivity extends Activity implements AdapterView.OnItemSele
 
     private void initializeDataMembers() {
         Intent intent = getIntent();
-        qty = Integer.parseInt(intent.getStringExtra("QTY"));
+        String quantity = intent.getStringExtra("QTY");
+        Log.i("Anup", "CheckoutActivity -getting from intent "+quantity);
+        qty = Integer.parseInt(quantity);
         object = intent.getParcelableExtra("INTENT_OBJECT");
 
 
